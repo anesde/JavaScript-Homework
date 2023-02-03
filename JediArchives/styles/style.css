@@ -1,0 +1,41 @@
+body {
+    background: rgb(2, 0, 36);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 21%, rgba(104, 5, 190, 1) 75%, rgba(0, 212, 255, 1) 100%);
+    color: white;
+}
+
+img {
+    position: relative;
+    left: 38%;
+    border-radius: 50%;
+
+}
+
+#table {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#btnPeople {
+    border-radius: 10%;
+    position: relative;
+    left: 45%;
+}
+
+#btnShip {
+    border-radius: 10%;
+    position: relative;
+    left: 45%;
+}
+
+#next {
+    border-radius: 10%;
+    position: relative;
+    left: 45%;
+}
+
+#prev {
+    border-radius: 10%;
+    position: relative;
+    left: 45%;
+}
