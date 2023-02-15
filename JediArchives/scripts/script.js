@@ -86,6 +86,7 @@ let navigationService = {
 let apiService = {
     baseUrl: "https://swapi.dev/api/",
     getPeople: function (page, sortBy = null, isAsc = true) {
+        uiService.toggleLoader(true);
         let peopleUrl = `${this.baseUrl}people/?page=${page}`;
         fetch(peopleUrl)
             .then(function (response) {
@@ -100,21 +101,29 @@ let apiService = {
                 // check for next page
                 uiService.toggleButtons(data.next, data.previous)
                 // loader
+                uiService.toggleLoader(false);
                 // show result
                 uiService.createTable(data.results);
-                // uiService.showShips(data.results)
             }).catch(function (error) {
-                console.log(error);
+                // console.log(error);
+                uiService.errorMessage(error);
+                uiService.toggleLoader(false);
             })
     },
     getShips: function (page) {
+        uiService.toggleLoader(true)
         let shipUrl = `${this.baseUrl}starships/?page=${page}`
         fetch(shipUrl)
             .then(function (response) {
                 return response.json();
             }).then(function (data) {
                 uiService.toggleButtons(data.next, data.previous);
-                uiService.showShips(data.results);
+                uiService.toggleLoader(false);
+                uiService.tableShips(data.results);
+            }).catch(function (error) {
+                // console.log(error);
+                uiService.errorMessage();
+                uiService.toggleLoader(false);
             })
     },
 }
@@ -157,6 +166,52 @@ let uiService = {
             table.appendChild(tr);
         }
     },
+    tableHeaderShips: function (table) {
+        let array = ['Name', 'Model', 'Manufacterer', 'Cost', 'People Capacity', 'Class'];
+        let tr = document.createElement('tr');
+        for (let item of array) {
+            let th = document.createElement('th');
+            th.id = item;
+            tr.appendChild(th).innerText = item;
+        }
+        table.appendChild(tr);
+    },
+    tableBodyShips: function (ships, table) {
+        for (let ship of ships) {
+            let tr = document.createElement('tr');
+
+            let nameCol = document.createElement('td');
+            tr.appendChild(nameCol).innerText = ship.name;
+
+            let modelCol = document.createElement('td');
+            tr.appendChild(modelCol).innerText = ship.model;
+
+            let manufacturerCol = document.createElement('td');
+            tr.appendChild(manufacturerCol).innerText = ship.manufacturer;
+
+            let costCol = document.createElement('td');
+            tr.appendChild(costCol).innerText = ship.cost_in_credits;
+
+            let peopleCol = document.createElement('td');
+            tr.appendChild(peopleCol).innerText = ship.passengers;
+
+            let classCol = document.createElement('td');
+            tr.appendChild(classCol).innerText = ship.starship_class;
+
+            table.appendChild(tr);
+        }
+    },
+    tableShips: function (data) {
+        let div = document.getElementById('divTable');
+        let table = document.createElement('table');
+        div.innerHTML = '';
+        table.style.margin = '0 auto';
+        table.setAttribute('border', '2');
+        div.appendChild(table);
+
+        uiService.tableHeaderShips(table);
+        uiService.tableBodyShips(data, table);
+    },
     createTable: function (data) {
         let div = document.getElementById('divTable');
         let table = document.createElement('table');
@@ -184,6 +239,19 @@ let uiService = {
         }
     },
 
+    toggleLoader: function (show) {
+        let loader = document.getElementById('loader');
+        if (show) {
+            loader.style.display = 'block';
+        } else {
+            loader.style.display = 'none';
+        }
+    },
+
+    errorMessage: function () {
+        let errorHeader = document.getElementById('errorMsg');
+        errorHeader.innerText = 'The page is not avalible';
+    }
 }
 
 navigationService.registerEventListener();
